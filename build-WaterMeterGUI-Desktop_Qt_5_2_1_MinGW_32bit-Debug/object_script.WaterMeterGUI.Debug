@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\settingsdialog.o
+./debug\databasemanager.o
+./debug\serialmanager.o
+./debug\qcustomplot.o
+./debug\moc_mainwindow.o
+./debug\moc_settingsdialog.o
+./debug\moc_serialmanager.o
+./debug\moc_qcustomplot.o
+);
