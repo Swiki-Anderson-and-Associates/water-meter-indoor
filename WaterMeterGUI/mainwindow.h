@@ -26,7 +26,6 @@ private slots:
     void openSerialPort();
     void closeSerialPort();
     void writeSerialData(QString text);
-    void writeUserSerialData();
     void readSerialData();
     void processLine(QString dataString);
     void connectionTimeout();

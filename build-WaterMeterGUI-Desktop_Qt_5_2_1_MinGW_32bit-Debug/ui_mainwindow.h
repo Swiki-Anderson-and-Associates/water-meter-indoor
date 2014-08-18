@@ -90,13 +90,9 @@ public:
     QWidget *consoleTab;
     QGridLayout *gridLayout_2;
     QTextEdit *consoleTextDisplay;
-    QHBoxLayout *horizontalLayout;
-    QLineEdit *consoleInputLine;
-    QPushButton *consoleSendButton;
     QHBoxLayout *horizontalLayout_2;
     QPushButton *consoleSettingsButton;
     QSpacerItem *horizontalSpacer;
-    QPushButton *consoleClearButton;
     QPushButton *consoleConnectButton;
     QPushButton *consoleDisconnectButton;
     QWidget *plotTab;
@@ -362,22 +358,6 @@ public:
 
         gridLayout_2->addWidget(consoleTextDisplay, 0, 2, 1, 1);
 
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        consoleInputLine = new QLineEdit(consoleTab);
-        consoleInputLine->setObjectName(QStringLiteral("consoleInputLine"));
-
-        horizontalLayout->addWidget(consoleInputLine);
-
-        consoleSendButton = new QPushButton(consoleTab);
-        consoleSendButton->setObjectName(QStringLiteral("consoleSendButton"));
-
-        horizontalLayout->addWidget(consoleSendButton);
-
-
-        gridLayout_2->addLayout(horizontalLayout, 1, 2, 1, 1);
-
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
@@ -390,11 +370,6 @@ public:
 
         horizontalLayout_2->addItem(horizontalSpacer);
 
-        consoleClearButton = new QPushButton(consoleTab);
-        consoleClearButton->setObjectName(QStringLiteral("consoleClearButton"));
-
-        horizontalLayout_2->addWidget(consoleClearButton);
-
         consoleConnectButton = new QPushButton(consoleTab);
         consoleConnectButton->setObjectName(QStringLiteral("consoleConnectButton"));
 
@@ -406,7 +381,7 @@ public:
         horizontalLayout_2->addWidget(consoleDisconnectButton);
 
 
-        gridLayout_2->addLayout(horizontalLayout_2, 3, 2, 1, 1);
+        gridLayout_2->addLayout(horizontalLayout_2, 2, 2, 1, 1);
 
         tabWidget_2->addTab(consoleTab, QString());
         plotTab = new QWidget();
@@ -579,9 +554,7 @@ public:
         databaseConnectButton->setText(QApplication::translate("MainWindow", "Connect", 0));
         databaseDisconnectButton->setText(QApplication::translate("MainWindow", "Disconnect", 0));
         tabWidget->setTabText(tabWidget->indexOf(databaseTab), QApplication::translate("MainWindow", "Database", 0));
-        consoleSendButton->setText(QApplication::translate("MainWindow", "Send", 0));
         consoleSettingsButton->setText(QApplication::translate("MainWindow", "Settings", 0));
-        consoleClearButton->setText(QApplication::translate("MainWindow", "Clear", 0));
         consoleConnectButton->setText(QApplication::translate("MainWindow", "Connect", 0));
         consoleDisconnectButton->setText(QApplication::translate("MainWindow", "Disconnect", 0));
         tabWidget_2->setTabText(tabWidget_2->indexOf(consoleTab), QApplication::translate("MainWindow", "Console", 0));

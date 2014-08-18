@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[27];
-    char stringdata[436];
+    char stringdata[434];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,31 +35,31 @@ QT_MOC_LITERAL(2, 26, 0),
 QT_MOC_LITERAL(3, 27, 15),
 QT_MOC_LITERAL(4, 43, 15),
 QT_MOC_LITERAL(5, 59, 4),
-QT_MOC_LITERAL(6, 64, 19),
-QT_MOC_LITERAL(7, 84, 14),
-QT_MOC_LITERAL(8, 99, 11),
-QT_MOC_LITERAL(9, 111, 10),
-QT_MOC_LITERAL(10, 122, 19),
-QT_MOC_LITERAL(11, 142, 16),
-QT_MOC_LITERAL(12, 159, 21),
-QT_MOC_LITERAL(13, 181, 20),
-QT_MOC_LITERAL(14, 202, 21),
-QT_MOC_LITERAL(15, 224, 22),
-QT_MOC_LITERAL(16, 247, 20),
-QT_MOC_LITERAL(17, 268, 19),
-QT_MOC_LITERAL(18, 288, 20),
-QT_MOC_LITERAL(19, 309, 24),
-QT_MOC_LITERAL(20, 334, 12),
-QT_MOC_LITERAL(21, 347, 13),
-QT_MOC_LITERAL(22, 361, 18),
-QT_MOC_LITERAL(23, 380, 13),
-QT_MOC_LITERAL(24, 394, 23),
-QT_MOC_LITERAL(25, 418, 5),
-QT_MOC_LITERAL(26, 424, 10)
+QT_MOC_LITERAL(6, 64, 14),
+QT_MOC_LITERAL(7, 79, 11),
+QT_MOC_LITERAL(8, 91, 10),
+QT_MOC_LITERAL(9, 102, 17),
+QT_MOC_LITERAL(10, 120, 19),
+QT_MOC_LITERAL(11, 140, 16),
+QT_MOC_LITERAL(12, 157, 21),
+QT_MOC_LITERAL(13, 179, 20),
+QT_MOC_LITERAL(14, 200, 21),
+QT_MOC_LITERAL(15, 222, 22),
+QT_MOC_LITERAL(16, 245, 20),
+QT_MOC_LITERAL(17, 266, 19),
+QT_MOC_LITERAL(18, 286, 20),
+QT_MOC_LITERAL(19, 307, 24),
+QT_MOC_LITERAL(20, 332, 12),
+QT_MOC_LITERAL(21, 345, 13),
+QT_MOC_LITERAL(22, 359, 18),
+QT_MOC_LITERAL(23, 378, 13),
+QT_MOC_LITERAL(24, 392, 23),
+QT_MOC_LITERAL(25, 416, 5),
+QT_MOC_LITERAL(26, 422, 10)
     },
     "MainWindow\0openSerialPort\0\0closeSerialPort\0"
-    "writeSerialData\0text\0writeUserSerialData\0"
-    "readSerialData\0processLine\0dataString\0"
+    "writeSerialData\0text\0readSerialData\0"
+    "processLine\0dataString\0connectionTimeout\0"
     "refreshControlPanel\0sendResetCommand\0"
     "sendCloseValveCommand\0sendOpenValveCommand\0"
     "sendReportLeakCommand\0sendReportValveCommand\0"
@@ -89,8 +89,8 @@ static const uint qt_meta_data_MainWindow[] = {
        3,    0,  125,    2, 0x08,
        4,    1,  126,    2, 0x08,
        6,    0,  129,    2, 0x08,
-       7,    0,  130,    2, 0x08,
-       8,    1,  131,    2, 0x08,
+       7,    1,  130,    2, 0x08,
+       9,    0,  133,    2, 0x08,
       10,    0,  134,    2, 0x08,
       11,    0,  135,    2, 0x08,
       12,    0,  136,    2, 0x08,
@@ -113,8 +113,8 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString,    5,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,    8,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,    9,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -143,9 +143,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 0: _t->openSerialPort(); break;
         case 1: _t->closeSerialPort(); break;
         case 2: _t->writeSerialData((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 3: _t->writeUserSerialData(); break;
-        case 4: _t->readSerialData(); break;
-        case 5: _t->processLine((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 3: _t->readSerialData(); break;
+        case 4: _t->processLine((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 5: _t->connectionTimeout(); break;
         case 6: _t->refreshControlPanel(); break;
         case 7: _t->sendResetCommand(); break;
         case 8: _t->sendCloseValveCommand(); break;

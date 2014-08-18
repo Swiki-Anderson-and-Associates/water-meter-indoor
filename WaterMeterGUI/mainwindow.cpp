@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     logFile.setFileName("log.txt");
     logFile.open(QIODevice::Append);
     log.setDevice(&logFile);
+    // TODO: separate hex and interpreted log files
+    // TODO: make log files refresh monthly
 
     // Setup Console
     QPalette p = ui->consoleTextDisplay->palette();
@@ -28,10 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->consoleTextDisplay->setEnabled(false);
     ui->consoleTextDisplay->setReadOnly(true);
     ui->consoleTextDisplay->setPalette(p);
-    ui->consoleInputLine->setEnabled(false);
-    ui->consoleInputLine->setPalette(p);
     ui->consoleDisconnectButton->setEnabled(false);
-    ui->consoleSendButton->setEnabled(false);
 
     // Setup Database
     db = new DatabaseManager;
@@ -66,10 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->consoleSettingsButton, SIGNAL(clicked()), serial, SLOT(showSettings()));
     connect(ui->consoleConnectButton,SIGNAL(clicked()),this,SLOT(openSerialPort()));
     connect(ui->consoleDisconnectButton,SIGNAL(clicked()),this,SLOT(closeSerialPort()));
-    connect(ui->consoleClearButton,SIGNAL(clicked()),ui->consoleTextDisplay,SLOT(clear()));
-    connect(ui->consoleClearButton,SIGNAL(clicked()),ui->consoleInputLine,SLOT(clear()));
     connect(serial,SIGNAL(readyRead()),this,SLOT(readSerialData()));
-    connect(ui->consoleSendButton,SIGNAL(clicked()),this,SLOT(writeUserSerialData()));
 
     // Connect Control Signals and Slots
     connect(ui->controlResetSystemButton,SIGNAL(clicked()),this,SLOT(sendResetCommand()));
@@ -112,10 +108,8 @@ void MainWindow::openSerialPort()
     ui->statusBar->showMessage(serial->openPort());
     ui->consoleDisconnectButton->setEnabled(true);
     ui->consoleConnectButton->setEnabled(false);
-    ui->consoleInputLine->setEnabled(true);
     ui->consoleTextDisplay->setEnabled(true);
     ui->consoleSettingsButton->setEnabled(false);
-    ui->consoleSendButton->setEnabled(true);
     ui->controlTab->setEnabled(true);
 }
 
@@ -125,14 +119,13 @@ void MainWindow::closeSerialPort()
     ui->statusBar->showMessage(tr("Disconnected"));
     ui->consoleDisconnectButton->setEnabled(false);
     ui->consoleConnectButton->setEnabled(true);
-    ui->consoleInputLine->clear();
-    ui->consoleInputLine->clear();
-    ui->consoleInputLine->setEnabled(false);
     ui->consoleTextDisplay->setEnabled(false);
     ui->consoleSettingsButton->setEnabled(true);
-    ui->consoleSendButton->setEnabled(false);
     ui->controlTab->setEnabled(false);
 }
+
+// Not needed with new comm protocol
+// TODO: remove this shit
 
 void MainWindow::writeSerialData(QString text)
 {
@@ -140,12 +133,6 @@ void MainWindow::writeSerialData(QString text)
     text += "\n";
     serial->writeData(text);
     ui->consoleTextDisplay->insertPlainText(text);
-}
-
-void MainWindow::writeUserSerialData()
-{
-    QString text = ui->consoleInputLine->text()+"\n";
-    writeSerialData(text);
 }
 
 void MainWindow::readSerialData()
@@ -263,6 +250,11 @@ void MainWindow::sendOpenValveCommand()
     ui->controlValvePositionLabel->setText("Open");
 }
 
+void MainWindow::setAutomaticValveControl()
+{
+    // TODO: add automatic control function
+}
+
 void MainWindow::sendReportLeakCommand()
 {
     writeSerialData("l");
@@ -287,11 +279,6 @@ void MainWindow::sendResetLeakCommand()
 {
     writeSerialData("k");
     ui->controlLeakConditionLabel->setText("None");
-}
-
-void MainWindow::setAutomaticValveControl()
-{
-    // TODO: add automatic control function
 }
 
 void MainWindow::databaseOpen()
