@@ -124,14 +124,9 @@ void MainWindow::closeSerialPort()
     ui->controlTab->setEnabled(false);
 }
 
-// Not needed with new comm protocol
-// TODO: remove this shit
-
-void MainWindow::writeSerialData(QString text)
+void MainWindow::writeConsole(QString text)
 {
     ui->consoleTextDisplay->setTextColor(Qt::green);
-    text += "\n";
-    serial->writeData(text);
     ui->consoleTextDisplay->insertPlainText(text);
 }
 
@@ -233,20 +228,20 @@ void MainWindow::refreshControlPanel()
 
 void MainWindow::sendResetCommand()
 {
-    writeSerialData("r");
+    serial->writeData("r");
     ui->controlValvePositionLabel->setText("Open");
     ui->controlLeakConditionLabel->setText("None");
 }
 
 void MainWindow::sendCloseValveCommand()
 {
-    writeSerialData("c");
+    serial->writeData("c");
     ui->controlValvePositionLabel->setText("Closed");
 }
 
 void MainWindow::sendOpenValveCommand()
 {
-    writeSerialData("o");
+    serial->writeData("o");
     ui->controlValvePositionLabel->setText("Open");
 }
 
@@ -257,27 +252,27 @@ void MainWindow::setAutomaticValveControl()
 
 void MainWindow::sendReportLeakCommand()
 {
-    writeSerialData("l");
+    serial->writeData("l");
 }
 
 void MainWindow::sendReportValveCommand()
 {
-    writeSerialData("v");
+    serial->writeData("v");
 }
 
 void MainWindow::sendReportLogCommand()
 {
-    writeSerialData("h");
+    serial->writeData("h");
 }
 
 void MainWindow::sendClearLogCommand()
 {
-    writeSerialData("q");
+    serial->writeData("q");
 }
 
 void MainWindow::sendResetLeakCommand()
 {
-    writeSerialData("k");
+    serial->writeData("k");
     ui->controlLeakConditionLabel->setText("None");
 }
 

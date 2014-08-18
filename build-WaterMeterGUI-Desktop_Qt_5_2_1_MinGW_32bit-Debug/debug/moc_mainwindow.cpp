@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[27];
-    char stringdata[434];
+    char stringdata[431];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,32 +33,32 @@ QT_MOC_LITERAL(0, 0, 10),
 QT_MOC_LITERAL(1, 11, 14),
 QT_MOC_LITERAL(2, 26, 0),
 QT_MOC_LITERAL(3, 27, 15),
-QT_MOC_LITERAL(4, 43, 15),
-QT_MOC_LITERAL(5, 59, 4),
-QT_MOC_LITERAL(6, 64, 14),
-QT_MOC_LITERAL(7, 79, 11),
-QT_MOC_LITERAL(8, 91, 10),
-QT_MOC_LITERAL(9, 102, 17),
-QT_MOC_LITERAL(10, 120, 19),
-QT_MOC_LITERAL(11, 140, 16),
-QT_MOC_LITERAL(12, 157, 21),
-QT_MOC_LITERAL(13, 179, 20),
-QT_MOC_LITERAL(14, 200, 21),
-QT_MOC_LITERAL(15, 222, 22),
-QT_MOC_LITERAL(16, 245, 20),
-QT_MOC_LITERAL(17, 266, 19),
-QT_MOC_LITERAL(18, 286, 20),
-QT_MOC_LITERAL(19, 307, 24),
-QT_MOC_LITERAL(20, 332, 12),
-QT_MOC_LITERAL(21, 345, 13),
-QT_MOC_LITERAL(22, 359, 18),
-QT_MOC_LITERAL(23, 378, 13),
-QT_MOC_LITERAL(24, 392, 23),
-QT_MOC_LITERAL(25, 416, 5),
-QT_MOC_LITERAL(26, 422, 10)
+QT_MOC_LITERAL(4, 43, 12),
+QT_MOC_LITERAL(5, 56, 4),
+QT_MOC_LITERAL(6, 61, 14),
+QT_MOC_LITERAL(7, 76, 11),
+QT_MOC_LITERAL(8, 88, 10),
+QT_MOC_LITERAL(9, 99, 17),
+QT_MOC_LITERAL(10, 117, 19),
+QT_MOC_LITERAL(11, 137, 16),
+QT_MOC_LITERAL(12, 154, 21),
+QT_MOC_LITERAL(13, 176, 20),
+QT_MOC_LITERAL(14, 197, 21),
+QT_MOC_LITERAL(15, 219, 22),
+QT_MOC_LITERAL(16, 242, 20),
+QT_MOC_LITERAL(17, 263, 19),
+QT_MOC_LITERAL(18, 283, 20),
+QT_MOC_LITERAL(19, 304, 24),
+QT_MOC_LITERAL(20, 329, 12),
+QT_MOC_LITERAL(21, 342, 13),
+QT_MOC_LITERAL(22, 356, 18),
+QT_MOC_LITERAL(23, 375, 13),
+QT_MOC_LITERAL(24, 389, 23),
+QT_MOC_LITERAL(25, 413, 5),
+QT_MOC_LITERAL(26, 419, 10)
     },
     "MainWindow\0openSerialPort\0\0closeSerialPort\0"
-    "writeSerialData\0text\0readSerialData\0"
+    "writeConsole\0text\0readSerialData\0"
     "processLine\0dataString\0connectionTimeout\0"
     "refreshControlPanel\0sendResetCommand\0"
     "sendCloseValveCommand\0sendOpenValveCommand\0"
@@ -142,7 +142,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->openSerialPort(); break;
         case 1: _t->closeSerialPort(); break;
-        case 2: _t->writeSerialData((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 2: _t->writeConsole((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 3: _t->readSerialData(); break;
         case 4: _t->processLine((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 5: _t->connectionTimeout(); break;
