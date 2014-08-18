@@ -22,11 +22,8 @@ public slots:
     void closePort();
     void writeData(QString text);
     QByteArray readData();
-    QString readBuffer();
-    void clearBuffer();
 
 private:
-    QString Buffer;
     SettingsDialog *settings;
 };
 

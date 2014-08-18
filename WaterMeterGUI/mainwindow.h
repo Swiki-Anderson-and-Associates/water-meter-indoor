@@ -29,6 +29,7 @@ private slots:
     void writeUserSerialData();
     void readSerialData();
     void processLine(QString dataString);
+    void connectionTimeout();
     void refreshControlPanel();
     void sendResetCommand();
     void sendCloseValveCommand();
@@ -52,6 +53,8 @@ private:
     SerialManager *serial;
     QFile logFile;
     QTextStream log;
+    QTimer *updateTimer;
+    QTimer *connectionTimer;
 };
 
 #endif // MAINWINDOW_H

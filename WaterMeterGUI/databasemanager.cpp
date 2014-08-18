@@ -14,16 +14,16 @@ DatabaseManager::~DatabaseManager()
 bool DatabaseManager::openDB(QString path)
 {
     bool ret;
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(path);
-    ret = db.open();
+    addDatabase("QSQLITE");
+    setDatabaseName(path);
+    ret = open();
     setupTables();
     return ret;
 }
 
 void DatabaseManager::closeDB()
 {
-    db.close();
+    close();
 }
 
 void DatabaseManager::setupTables()
@@ -34,7 +34,7 @@ void DatabaseManager::setupTables()
     query.exec("CREATE TABLE IF NOT EXISTS LeakLog(LId INTEGER PRIMARY KEY, Time INTEGER, Leak TEXT)");
 }
 
-void DatabaseManager::logGallon(int time, int gallon)
+void DatabaseManager::logGallon(qint32 time, qint32 gallon)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO GallonLog(Time, Gallon) VALUES(:time, :gallon)");
@@ -43,16 +43,16 @@ void DatabaseManager::logGallon(int time, int gallon)
     query.exec();
 }
 
-void DatabaseManager::logValve(int time, QString position)
+void DatabaseManager::logValve(qint32 time, QString position)
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO ValueLog(Time, Position) VALUES(:time, :position)");
+    query.prepare("INSERT INTO ValveLog(Time, Position) VALUES(:time, :position)");
     query.bindValue(":time",time);
     query.bindValue(":position",position.toLocal8Bit());
     query.exec();
 }
 
-void DatabaseManager::logLeak(int time, QString leak)
+void DatabaseManager::logLeak(qint32 time, QString leak)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO LeakLog(Time, Leak) VALUES(:time, :leak)");
@@ -64,23 +64,20 @@ void DatabaseManager::logLeak(int time, QString leak)
 QString DatabaseManager::lastValve()
 {
     QSqlQuery query;
-    query.exec("SELECT Valve FROM ValveLog WHERE VId = (SELECT MAX(VId) FROM ValveLog");
+    query.exec("SELECT Position FROM ValveLog WHERE VId = (SELECT MAX(VId) FROM ValveLog)");
+    query.next();
     return query.value(0).toString();
 }
 
 QString DatabaseManager::lastLeak()
 {
     QSqlQuery query;
-    query.exec("SELECT Leak FROM LeakLog WHERE LId = (SELECT MAX(LId) FROM LeakLog");
+    query.exec("SELECT Leak FROM LeakLog WHERE LId = (SELECT MAX(LId) FROM LeakLog)");
+    query.next();
     return query.value(0).toString();
 }
 
-QSqlError DatabaseManager::lastError()
-{
-    return db.lastError();
-}
-
-int DatabaseManager::numGallonsBetween(int start, int end)
+int DatabaseManager::numGallonsBetween(qint32 start, qint32 end)
 {
     QSqlQuery query;
     query.prepare("SELECT count(*) FROM GallonLog Where Gallon BETWEEN :s AND :e");
@@ -89,5 +86,4 @@ int DatabaseManager::numGallonsBetween(int start, int end)
     query.exec();
     query.next();
     return query.value(0).toInt();
-
 }

@@ -47,7 +47,7 @@ public:
     QGridLayout *gridLayout;
     QSplitter *splitter;
     QTabWidget *tabWidget;
-    QWidget *generalTab;
+    QWidget *controlTab;
     QGridLayout *gridLayout_5;
     QGroupBox *groupBox_3;
     QGridLayout *gridLayout_6;
@@ -75,7 +75,7 @@ public:
     QGroupBox *groupBox_4;
     QGridLayout *gridLayout_7;
     QPushButton *controlResetSystemButton;
-    QWidget *advancedTab;
+    QWidget *databaseTab;
     QGridLayout *gridLayout_11;
     QHBoxLayout *horizontalLayout_4;
     QLabel *label_2;
@@ -144,14 +144,14 @@ public:
         splitter->setOrientation(Qt::Horizontal);
         tabWidget = new QTabWidget(splitter);
         tabWidget->setObjectName(QStringLiteral("tabWidget"));
-        generalTab = new QWidget();
-        generalTab->setObjectName(QStringLiteral("generalTab"));
-        generalTab->setLayoutDirection(Qt::LeftToRight);
-        gridLayout_5 = new QGridLayout(generalTab);
+        controlTab = new QWidget();
+        controlTab->setObjectName(QStringLiteral("controlTab"));
+        controlTab->setLayoutDirection(Qt::LeftToRight);
+        gridLayout_5 = new QGridLayout(controlTab);
         gridLayout_5->setSpacing(6);
         gridLayout_5->setContentsMargins(11, 11, 11, 11);
         gridLayout_5->setObjectName(QStringLiteral("gridLayout_5"));
-        groupBox_3 = new QGroupBox(generalTab);
+        groupBox_3 = new QGroupBox(controlTab);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         gridLayout_6 = new QGridLayout(groupBox_3);
         gridLayout_6->setSpacing(6);
@@ -170,7 +170,7 @@ public:
 
         gridLayout_5->addWidget(groupBox_3, 0, 3, 1, 1);
 
-        groupBox_5 = new QGroupBox(generalTab);
+        groupBox_5 = new QGroupBox(controlTab);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
         gridLayout_8 = new QGridLayout(groupBox_5);
         gridLayout_8->setSpacing(6);
@@ -185,7 +185,7 @@ public:
 
         gridLayout_5->addWidget(groupBox_5, 0, 1, 1, 2);
 
-        groupBox_6 = new QGroupBox(generalTab);
+        groupBox_6 = new QGroupBox(controlTab);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
         gridLayout_9 = new QGridLayout(groupBox_6);
         gridLayout_9->setSpacing(6);
@@ -204,7 +204,7 @@ public:
 
         gridLayout_5->addWidget(groupBox_6, 2, 3, 1, 1);
 
-        groupBox_7 = new QGroupBox(generalTab);
+        groupBox_7 = new QGroupBox(controlTab);
         groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
         gridLayout_10 = new QGridLayout(groupBox_7);
         gridLayout_10->setSpacing(6);
@@ -225,7 +225,7 @@ public:
 
         gridLayout_5->addWidget(groupBox_7, 2, 1, 1, 2);
 
-        groupBox = new QGroupBox(generalTab);
+        groupBox = new QGroupBox(controlTab);
         groupBox->setObjectName(QStringLiteral("groupBox"));
         gridLayout_3 = new QGridLayout(groupBox);
         gridLayout_3->setSpacing(6);
@@ -260,7 +260,7 @@ public:
 
         gridLayout_5->addWidget(groupBox, 3, 3, 2, 1);
 
-        groupBox_8 = new QGroupBox(generalTab);
+        groupBox_8 = new QGroupBox(controlTab);
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
         gridLayout_4 = new QGridLayout(groupBox_8);
         gridLayout_4->setSpacing(6);
@@ -277,7 +277,7 @@ public:
 
         gridLayout_5->addWidget(groupBox_8, 3, 1, 1, 2);
 
-        groupBox_4 = new QGroupBox(generalTab);
+        groupBox_4 = new QGroupBox(controlTab);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
         gridLayout_7 = new QGridLayout(groupBox_4);
         gridLayout_7->setSpacing(6);
@@ -291,22 +291,22 @@ public:
 
         gridLayout_5->addWidget(groupBox_4, 4, 1, 1, 2);
 
-        tabWidget->addTab(generalTab, QString());
-        advancedTab = new QWidget();
-        advancedTab->setObjectName(QStringLiteral("advancedTab"));
-        gridLayout_11 = new QGridLayout(advancedTab);
+        tabWidget->addTab(controlTab, QString());
+        databaseTab = new QWidget();
+        databaseTab->setObjectName(QStringLiteral("databaseTab"));
+        gridLayout_11 = new QGridLayout(databaseTab);
         gridLayout_11->setSpacing(6);
         gridLayout_11->setContentsMargins(11, 11, 11, 11);
         gridLayout_11->setObjectName(QStringLiteral("gridLayout_11"));
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setSpacing(6);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        label_2 = new QLabel(advancedTab);
+        label_2 = new QLabel(databaseTab);
         label_2->setObjectName(QStringLiteral("label_2"));
 
         horizontalLayout_4->addWidget(label_2);
 
-        databasePathLineEdit = new QLineEdit(advancedTab);
+        databasePathLineEdit = new QLineEdit(databaseTab);
         databasePathLineEdit->setObjectName(QStringLiteral("databasePathLineEdit"));
         databasePathLineEdit->setReadOnly(true);
 
@@ -318,12 +318,12 @@ public:
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(6);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
-        databaseNewDBButton = new QPushButton(advancedTab);
+        databaseNewDBButton = new QPushButton(databaseTab);
         databaseNewDBButton->setObjectName(QStringLiteral("databaseNewDBButton"));
 
         horizontalLayout_3->addWidget(databaseNewDBButton);
 
-        databaseBrowseButton = new QPushButton(advancedTab);
+        databaseBrowseButton = new QPushButton(databaseTab);
         databaseBrowseButton->setObjectName(QStringLiteral("databaseBrowseButton"));
 
         horizontalLayout_3->addWidget(databaseBrowseButton);
@@ -334,12 +334,12 @@ public:
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setSpacing(6);
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
-        databaseConnectButton = new QPushButton(advancedTab);
+        databaseConnectButton = new QPushButton(databaseTab);
         databaseConnectButton->setObjectName(QStringLiteral("databaseConnectButton"));
 
         horizontalLayout_5->addWidget(databaseConnectButton);
 
-        databaseDisconnectButton = new QPushButton(advancedTab);
+        databaseDisconnectButton = new QPushButton(databaseTab);
         databaseDisconnectButton->setObjectName(QStringLiteral("databaseDisconnectButton"));
 
         horizontalLayout_5->addWidget(databaseDisconnectButton);
@@ -347,7 +347,7 @@ public:
 
         gridLayout_11->addLayout(horizontalLayout_5, 2, 0, 1, 1);
 
-        tabWidget->addTab(advancedTab, QString());
+        tabWidget->addTab(databaseTab, QString());
         splitter->addWidget(tabWidget);
         tabWidget_2 = new QTabWidget(splitter);
         tabWidget_2->setObjectName(QStringLiteral("tabWidget_2"));
@@ -544,7 +544,7 @@ public:
         retranslateUi(MainWindow);
 
         tabWidget->setCurrentIndex(0);
-        tabWidget_2->setCurrentIndex(1);
+        tabWidget_2->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -572,13 +572,13 @@ public:
         controlValvePositionLabel->setText(QApplication::translate("MainWindow", "Open", 0));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "System Control:", 0));
         controlResetSystemButton->setText(QApplication::translate("MainWindow", "Reset System", 0));
-        tabWidget->setTabText(tabWidget->indexOf(generalTab), QApplication::translate("MainWindow", "Control", 0));
+        tabWidget->setTabText(tabWidget->indexOf(controlTab), QApplication::translate("MainWindow", "Control", 0));
         label_2->setText(QApplication::translate("MainWindow", "Database Path:", 0));
         databaseNewDBButton->setText(QApplication::translate("MainWindow", "New DB", 0));
         databaseBrowseButton->setText(QApplication::translate("MainWindow", "Browse", 0));
         databaseConnectButton->setText(QApplication::translate("MainWindow", "Connect", 0));
         databaseDisconnectButton->setText(QApplication::translate("MainWindow", "Disconnect", 0));
-        tabWidget->setTabText(tabWidget->indexOf(advancedTab), QApplication::translate("MainWindow", "Database", 0));
+        tabWidget->setTabText(tabWidget->indexOf(databaseTab), QApplication::translate("MainWindow", "Database", 0));
         consoleSendButton->setText(QApplication::translate("MainWindow", "Send", 0));
         consoleSettingsButton->setText(QApplication::translate("MainWindow", "Settings", 0));
         consoleClearButton->setText(QApplication::translate("MainWindow", "Clear", 0));

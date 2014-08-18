@@ -24,7 +24,7 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="generalTab">
+       <widget class="QWidget" name="controlTab">
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
@@ -219,7 +219,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="advancedTab">
+       <widget class="QWidget" name="databaseTab">
         <attribute name="title">
          <string>Database</string>
         </attribute>
@@ -283,7 +283,7 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget_2">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="consoleTab">
         <attribute name="title">

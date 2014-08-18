@@ -53,21 +53,10 @@ void SerialManager::writeData(QString text)
     write(text.toLocal8Bit());
 }
 
-QByteArray SerialManager::readData()
+QByteArray SerialManager::readData()        // as of right now, this function is pointless, but could be useful
 {
     QByteArray data = readAll();
-    Buffer.append(data);
     return data;
-}
-
-QString SerialManager::readBuffer()
-{
-    return Buffer;
-}
-
-void SerialManager::clearBuffer()
-{
-    Buffer.clear();
 }
 
 void SerialManager::handleError(QSerialPort::SerialPortError error)

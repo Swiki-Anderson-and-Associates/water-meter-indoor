@@ -5,7 +5,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-class DatabaseManager
+class DatabaseManager : public QSqlDatabase
 {
 public:
     DatabaseManager();
@@ -13,16 +13,15 @@ public:
     bool openDB(QString path);
     void closeDB();
     void setupTables();
-    void logGallon(int time, int gallon);
-    void logValve(int time, QString position);
-    void logLeak(int time, QString leak);
+    void logGallon(qint32 time, qint32 gallon);
+    void logValve(qint32  time, QString position);
+    void logLeak(qint32 time, QString leak);
     QString lastLeak();
     QString lastValve();
     QSqlError lastError();
-    int numGallonsBetween(int start, int end);
+    int numGallonsBetween(qint32 start, qint32 end);
 
 private:
-    QSqlDatabase db;
     QString dbDirectory;
 };
 
