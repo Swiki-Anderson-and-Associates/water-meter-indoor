@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
     logFile.setFileName("log.txt");
     logFile.open(QIODevice::Append);
     log.setDevice(&logFile);
-    // TODO: separate hex and interpreted log files
     // TODO: make log files refresh monthly
 
     // Setup Console
