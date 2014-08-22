@@ -7,6 +7,7 @@
 #include <QList>
 #include <QDateTime>
 #include <QTime>
+#include <QDate>
 
 //#include <QDebug>
 
@@ -366,6 +367,9 @@ void MainWindow::plotUpdate()
        // ui->plotPlot->yAxis->setAutoSubTicks(false);
 
         QDateTime now = QDateTime::currentDateTime();
+        QDate nowd = QDate::currentDate();
+        QTime nowt = QTime::currentTime();
+        int secsofDay = nowt.msecsSinceStartOfDay()/1000;
         unsigned int tnow = now.toTime_t();
         unsigned int start, end, resolution, ngal, ngalmax, ngalsum, tprev;
         unsigned long tsum;
@@ -453,8 +457,8 @@ void MainWindow::plotUpdate()
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Hour");
             break;
-        case 3:     // last week                // TODO: fix week and month so that they start at midnight
-            start = tnow-(3600*24*7);
+        case 3:     // last week              //(Done)  // TODO: fix week and month so that they start at midnight
+            start = tnow-(3600*24*7+secsofDay);
             end = tnow;
             resolution = 3600*24;
             tprev = start;
@@ -480,7 +484,7 @@ void MainWindow::plotUpdate()
             ui->plotPlot->yAxis->setLabel("Gallons Used By Day");
             break;
         case 4:     // last month
-            start = tnow-(3600*24*30);              // TODO: fix to account for different amounts of days
+            start = tnow-((3600*24*nowd.daysInMonth())+secsofDay);          //(Done)    // TODO: fix to account for different amounts of days
             end = tnow;
             resolution = 3600*24;
             tprev = start;
@@ -506,9 +510,9 @@ void MainWindow::plotUpdate()
             ui->plotPlot->yAxis->setLabel("Gallons Used By Day");
             break;
         case 5:     // last year
-            start = tnow-(3600*24*365);              // TODO: fix to account for different leap years
+            start = tnow-(3600*24*nowd.daysInYear());       //(Done)       // TODO: fix to account for different leap years
             end = tnow;
-            resolution = 3600*24*30;
+            resolution = 3600*24*nowd.daysInYear();
             tprev = start;
             for (unsigned int t = start+resolution; t<=end; t+=resolution)
             {
@@ -526,7 +530,7 @@ void MainWindow::plotUpdate()
             gallons->setData(barPos,gallonsData);
             gallons->setWidth(50);
             ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
-            ui->plotPlot->xAxis->setTickStep(3600*24*30); // 1 month            // TODO: fix to account for different month lengths
+            ui->plotPlot->xAxis->setTickStep(3600*24*nowd.daysInMonth()); // 1 month    //(Done)// TODO: fix to account for different month lengths
             ui->plotPlot->xAxis->setSubTickCount(0);
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Month");
