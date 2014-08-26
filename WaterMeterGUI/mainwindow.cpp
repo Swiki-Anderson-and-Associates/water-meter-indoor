@@ -7,6 +7,8 @@
 #include <QList>
 #include <QDateTime>
 #include <QTime>
+#include <QDate>
+#include <QString>
 
 //#include <QDebug>
 
@@ -17,10 +19,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Setup Log File
-    logFile.setFileName("log.txt");
+    QDateTime now = QDateTime::currentDateTime();
+    logFile.setFileName("log" + now.toString("MMM_yyyy") + ".txt");
+    //logFile.setFileName("log.txt");
     logFile.open(QIODevice::Append);
     log.setDevice(&logFile);
-    // TODO: make log files refresh monthly
+    // TODO: separate hex and interpreted log files
+    // (Done)TODO: make log files refresh monthly
 
     // Setup Console
     QPalette p = ui->consoleTextDisplay->palette();
@@ -101,7 +106,7 @@ MainWindow::~MainWindow()
     logFile.close();
     delete ui;
 }
-\
+
 void MainWindow::openSerialPort()
 { 
     ui->statusBar->showMessage(serial->openPort());
@@ -172,6 +177,10 @@ void MainWindow::processLine(QString dataString)
                 if (stringList.length() >=3 )
                 {
                     QDateTime dateTime = QDateTime::fromString(stringList[0],"MM/dd/yyyy HH:mm:ss");
+                    if (!dateTime.isValid())
+                    {
+                        ui->statusBar->showMessage("Improper date format.");
+                    }
                     dateTime.setTimeSpec(Qt::UTC);
                     qint32 unixTime = dateTime.toTime_t();
                     db->logGallon(unixTime,stringList[2].toInt());
@@ -181,6 +190,10 @@ void MainWindow::processLine(QString dataString)
         else
         {
             QDateTime dateTime = QDateTime::fromString(stringList[0],"MM/dd/yyyy HH:mm:ss");
+            if (!dateTime.isValid())
+            {
+                ui->statusBar->showMessage("Improper date format.");
+            }
             qint32 unixTime = dateTime.toTime_t();
             if (stringList[1].contains("Valve"))
             {
@@ -192,7 +205,7 @@ void MainWindow::processLine(QString dataString)
             }
         }
     }
-    // TODO: Add handling for improper data format
+    // (Done)TODO: Add handling for improper data format
 }
 
 void MainWindow::connectionTimeout()
@@ -277,7 +290,9 @@ void MainWindow::sendResetLeakCommand()
 
 void MainWindow::databaseOpen()
 {
+    //bool btemp;
     db->openDB(ui->databasePathLineEdit->text());
+    //qDebug() << "IsOpen: " << btemp << endl;
     ui->databaseBrowseButton->setEnabled(false);
     ui->databaseNewDBButton->setEnabled(false);
     ui->databaseConnectButton->setEnabled(false);
@@ -365,10 +380,14 @@ void MainWindow::plotUpdate()
        // ui->plotPlot->yAxis->setAutoSubTicks(false);
 
         QDateTime now = QDateTime::currentDateTime();
+        //QDate nowd = QDate::currentDate();
+        //QTime nowt = QTime::currentTime();
+        QDateTime tdatetime;  // The QDatetime for variable t;  used as temp variale sometimes
+        unsigned int secsofDay = now.time().msecsSinceStartOfDay()/1000;
         unsigned int tnow = now.toTime_t();
         unsigned int start, end, resolution, ngal, ngalmax, ngalsum, tprev;
         unsigned long tsum;
-        QVector<double> barPos, gallonsData;
+        QVector<double> barPos, gallonsData,tickPos;
         ngalmax = 0;
         ngalsum = 0;
 
@@ -452,8 +471,8 @@ void MainWindow::plotUpdate()
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Hour");
             break;
-        case 3:     // last week                // TODO: fix week and month so that they start at midnight
-            start = tnow-(3600*24*7);
+        case 3:     // last week              //(Done)TODO: fix week and month so that they start at midnight
+            start = tnow-(3600*24*7+secsofDay);
             end = tnow;
             resolution = 3600*24;
             tprev = start;
@@ -479,7 +498,9 @@ void MainWindow::plotUpdate()
             ui->plotPlot->yAxis->setLabel("Gallons Used By Day");
             break;
         case 4:     // last month
-            start = tnow-(3600*24*30);              // TODO: fix to account for different amounts of days
+            //start = tnow-((3600*24*now.date().daysInMonth())+secsofDay);          //(Done)TODO: fix to account for different amounts of days
+            tdatetime = now.addMonths(-1);
+            start = tdatetime.toTime_t() - secsofDay;
             end = tnow;
             resolution = 3600*24;
             tprev = start;
@@ -499,17 +520,21 @@ void MainWindow::plotUpdate()
             gallons->setData(barPos,gallonsData);
             gallons->setWidth(50);
             ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
-            ui->plotPlot->xAxis->setTickStep(3600*24*7); // 1 day
+            ui->plotPlot->xAxis->setTickStep(3600*24*7); // 1 week
             ui->plotPlot->xAxis->setSubTickCount(6);
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Day");
             break;
         case 5:     // last year
-            start = tnow-(3600*24*365);              // TODO: fix to account for different leap years
+            //start = tnow-(3600*24*now.date().daysInYear());       //(Done)TODO: fix to account for different leap years
+            tdatetime = now.addYears(-1);
+            start = tdatetime.toTime_t() -(3600*24*(tdatetime.date().day()-1) + secsofDay);  // Start at the midnight of the first day in month
             end = tnow;
-            resolution = 3600*24*30;
+            tdatetime.setTime_t(start);
+            resolution = 3600*24*tdatetime.date().daysInMonth();
             tprev = start;
-            for (unsigned int t = start+resolution; t<=end; t+=resolution)
+            tickPos << start;
+            for (unsigned int t = start+resolution; t <= end ; t+=resolution)
             {
                 ngal = db->numGallonsBetween(tprev,t-1);
                 ngalsum += ngal;
@@ -521,11 +546,15 @@ void MainWindow::plotUpdate()
                 tsum = t+tprev;
                 barPos << tsum/2;
                 tprev = t;
+                tdatetime.setTime_t(t);
+                resolution = 3600*24*tdatetime.date().daysInMonth();
+                tickPos << t;
             }
             gallons->setData(barPos,gallonsData);
             gallons->setWidth(50);
             ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
-            ui->plotPlot->xAxis->setTickStep(3600*24*30); // 1 month            // TODO: fix to account for different month lengths
+            //ui->plotPlot->xAxis->setTickStep(3600*24*now.date().daysInMonth()); // 1 month    //(Done)// TODO: fix to account for different month lengths
+            ui->plotPlot->xAxis->setTickVector(tickPos);
             ui->plotPlot->xAxis->setSubTickCount(0);
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Month");
@@ -534,6 +563,113 @@ void MainWindow::plotUpdate()
             /*
             start = ui->plotStartTimeEdit->dateTime();
             end = ui->plotEndTimeEdit->dateTime();*/
+            tdatetime = ui->plotStartTimeEdit->dateTime();
+            start = tdatetime.toTime_t();
+            tdatetime = ui->plotEndTimeEdit->dateTime();
+            end = tdatetime.toTime_t();
+            if ((start - end) > 3600*24*90)   // >3 months, resolution is month lenght (dynamic)
+            {
+                tdatetime.setTime_t(start);
+                resolution = 3600*24*tdatetime.date().daysInMonth();
+                tprev = start;
+                tickPos << start;
+                for (unsigned int t = start+resolution; t <= end ; t+=resolution)
+                {
+                    ngal = db->numGallonsBetween(tprev,t-1);
+                    ngalsum += ngal;
+                    if (ngal > ngalmax)
+                    {
+                        ngalmax = ngal;
+                    }
+                    gallonsData  << ngal;
+                    tsum = t+tprev;
+                    barPos << tsum/2;
+                    tprev = t;
+                    tdatetime.setTime_t(t);
+                    resolution = 3600*24*tdatetime.date().daysInMonth();
+                    tickPos << t;
+                }
+                gallons->setData(barPos,gallonsData);
+                gallons->setWidth(50);
+                ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
+                ui->plotPlot->xAxis->setTickVector(tickPos);
+                ui->plotPlot->xAxis->setSubTickCount(0);
+                ui->plotPlot->xAxis->setLabel("Time");
+                ui->plotPlot->yAxis->setLabel("Gallons Used By Month");
+            }
+            else  // <3 months, resolution is static
+            {
+                if ((start - end) > 3600*24*28)  //3months >= span >4 weeks
+                {
+                    resolution = 3600*24;
+                    ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
+                    ui->plotPlot->xAxis->setTickStep(3600*24*7); // 1 week
+                    ui->plotPlot->xAxis->setSubTickCount(6);
+                    ui->plotPlot->xAxis->setLabel("Time");
+                    ui->plotPlot->yAxis->setLabel("Gallons Used By Day");
+                }
+                else
+                {
+                    if ((start - end) > 3600*24*5)  //4weeks >=span >5days
+                    {
+                        resolution = 3600*24;
+                        ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
+                        ui->plotPlot->xAxis->setTickStep(3600*24); // 1 day
+                        ui->plotPlot->xAxis->setSubTickCount(23);
+                        ui->plotPlot->xAxis->setLabel("Time");
+                        ui->plotPlot->yAxis->setLabel("Gallons Used By Day");
+                    }
+                    else
+                    {
+                        if((start - end) > 3600*24*2)  //5days >= span > 2days
+                        {
+                            resolution = 3600;
+                            ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
+                            ui->plotPlot->xAxis->setTickStep(3600*24); // 1 day
+                            ui->plotPlot->xAxis->setSubTickCount(24);
+                            ui->plotPlot->xAxis->setLabel("Time");
+                            ui->plotPlot->yAxis->setLabel("Gallons Used By Hour");
+                        }
+                        else
+                        {
+                            if ((start - end) > 3600*10)  //2days >= span >10hours
+                            {
+                                resolution = 3600;
+                                ui->plotPlot->xAxis->setDateTimeFormat("h AP");
+                                ui->plotPlot->xAxis->setTickStep(3600*3); // 3 hour
+                                ui->plotPlot->xAxis->setSubTickCount(5);
+                                ui->plotPlot->xAxis->setLabel("Time");
+                                ui->plotPlot->yAxis->setLabel("Gallons Used By Hour");
+                            }
+                            else  // <10hours
+                            {
+                                resolution = 60;
+                                ui->plotPlot->xAxis->setDateTimeFormat("HH:mm");
+                                ui->plotPlot->xAxis->setTickStep(60*10); // 10 minutes
+                                ui->plotPlot->xAxis->setSubTickCount(9);
+                                ui->plotPlot->xAxis->setLabel("Time");
+                                ui->plotPlot->yAxis->setLabel("Gallons Used By Minute");
+                            }
+                        }
+                    }
+                }
+                tprev = start;
+                for (unsigned int t = start+resolution; t<=end; t+=resolution)
+                {
+                    ngal = db->numGallonsBetween(tprev,t-1);
+                    ngalsum += ngal;
+                    if (ngal > ngalmax)
+                    {
+                        ngalmax = ngal;
+                    }
+                    gallonsData  << ngal;
+                    tsum = t+tprev;
+                    barPos << tsum/2;
+                    tprev = t;
+                }
+                gallons->setData(barPos,gallonsData);
+                gallons->setWidth(50);
+            }
             break;
         }
 
