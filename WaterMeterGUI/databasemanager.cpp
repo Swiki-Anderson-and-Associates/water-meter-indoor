@@ -14,16 +14,16 @@ DatabaseManager::~DatabaseManager()
 bool DatabaseManager::openDB(QString path)
 {
     bool ret;
-    addDatabase("QSQLITE");
-    setDatabaseName(path);
-    ret = open();
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(path);
+    ret = db.open();
     setupTables();
     return ret;
 }
 
 void DatabaseManager::closeDB()
 {
-    close();
+    db.close();
 }
 
 void DatabaseManager::setupTables()

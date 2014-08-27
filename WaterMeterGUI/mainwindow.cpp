@@ -206,7 +206,7 @@ void MainWindow::refreshControlPanel()
     QTime dayStart = QTime::fromMSecsSinceStartOfDay(0);
     QDateTime thisMorning = now;
     thisMorning.setTime(dayStart);
-    if (db->isOpen())
+    if (db->db.isOpen())
     {
         if (db->lastLeak().contains("No leaks"))
         {
@@ -345,7 +345,7 @@ void MainWindow::plotToggleDateTimeBoxes(int index)
 
 void MainWindow::plotUpdate()
 {
-    if (db->isOpen())
+    if (db->db.isOpen())
     {
         ui->plotPlot->clearItems();
         ui->plotPlot->clearPlottables();
