@@ -63,11 +63,10 @@ MainWindow::MainWindow(QWidget *parent) :
     updateTimer->start(30000);                                                        // update every thirty seconds
 
     // Create connection timeout timer
-    connectionTimer = new QTimer(this);             // TODO: figure out this and finish it
-    //connect()
+    connectionTimer = new QTimer(this);             //TODO: figure out this and finish it
     connect(connectionTimer,SIGNAL(timeout()),this,SLOT(connectionTimeout()));  // in SLOT readSerialData,  "timer-start()" will restart the timer every time.
-    // connectionTimer->start(1000);
-    // connectionTimer->setSingleShot(1); // if once disconnected, other functions will be disabled.  Please use single-shot
+    connectionTimer->start(300000);
+    connectionTimer->setSingleShot(1); // if once disconnected, other functions will be disabled.  Please use single-shot
 
     // Connect Console Signals and Slots
     connect(ui->consoleSettingsButton, SIGNAL(clicked()), serial, SLOT(showSettings()));
@@ -566,14 +565,14 @@ void MainWindow::plotUpdate()
             gallons->setData(barPos,gallonsData);
             gallons->setWidth(50);
             ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
-            //ui->plotPlot->xAxis->setTickStep(3600*24*now.date().daysInMonth()); // 1 month    //(Done)// TODO: fix to account for different month lengths
+            //ui->plotPlot->xAxis->setTickStep(3600*24*now.date().daysInMonth()); // 1 month    //(Done)TODO: fix to account for different month lengths
             ui->plotPlot->xAxis->setAutoTicks(false);
             ui->plotPlot->xAxis->setTickVector(barPos);
             ui->plotPlot->xAxis->setSubTickCount(0);
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Month");
             break;
-        case 6:     // custom                           // TODO: fix to allow custom time periods
+        case 6:     // custom                           // (Done)TODO: fix to allow custom time periods
             /*
             start = ui->plotStartTimeEdit->dateTime();
             end = ui->plotEndTimeEdit->dateTime();*/
@@ -581,7 +580,7 @@ void MainWindow::plotUpdate()
             start = tdatetime.toTime_t();
             tdatetime = ui->plotEndTimeEdit->dateTime();
             end = tdatetime.toTime_t();
-            if (end < start) ui->statusBar->showMessage("Incorrect custom date.");
+            if (end < start) ui->statusBar->showMessage("Incorrect custom time periods.");
             else{
             if ((end - start) > 3600*24*90)   // >3 months, resolution is month lenght (dynamic)
             {
