@@ -17,9 +17,12 @@ bool DatabaseManager::openDB(QString path)
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(path);
     ret = db.open();
+<<<<<<< HEAD
     //setDatabaseName(path);
     //addDatabase("QSQLITE");
     //ret = open();
+=======
+>>>>>>> origin/joye
     setupTables();
     return ret;
 }
@@ -27,7 +30,10 @@ bool DatabaseManager::openDB(QString path)
 void DatabaseManager::closeDB()
 {
     db.close();
+<<<<<<< HEAD
     //close();
+=======
+>>>>>>> origin/joye
 }
 
 void DatabaseManager::setupTables()
