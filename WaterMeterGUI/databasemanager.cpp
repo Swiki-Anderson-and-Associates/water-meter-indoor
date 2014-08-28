@@ -1,7 +1,7 @@
 #include "databasemanager.h"
 #include <QVariant>
 #include <QDebug>
-
+#include <QSqlError>
 DatabaseManager::DatabaseManager()
 {
 }
@@ -14,16 +14,20 @@ DatabaseManager::~DatabaseManager()
 bool DatabaseManager::openDB(QString path)
 {
     bool ret;
-    addDatabase("QSQLITE");
-    setDatabaseName(path);
-    ret = open();
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(path);
+    ret = db.open();
+    //setDatabaseName(path);
+    //addDatabase("QSQLITE");
+    //ret = open();
     setupTables();
     return ret;
 }
 
 void DatabaseManager::closeDB()
 {
-    close();
+    db.close();
+    //close();
 }
 
 void DatabaseManager::setupTables()

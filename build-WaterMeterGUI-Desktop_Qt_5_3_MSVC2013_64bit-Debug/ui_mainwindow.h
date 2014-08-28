@@ -406,11 +406,13 @@ public:
 
         plotEndTimeEdit = new QDateTimeEdit(groupBox_2);
         plotEndTimeEdit->setObjectName(QStringLiteral("plotEndTimeEdit"));
+        plotEndTimeEdit->setDateTime(QDateTime(QDate(2014, 8, 1), QTime(0, 0, 0)));
 
         gridLayout_12->addWidget(plotEndTimeEdit, 2, 1, 1, 1);
 
         plotStartTimeEdit = new QDateTimeEdit(groupBox_2);
         plotStartTimeEdit->setObjectName(QStringLiteral("plotStartTimeEdit"));
+        plotStartTimeEdit->setDateTime(QDateTime(QDate(2014, 6, 1), QTime(0, 0, 0)));
 
         gridLayout_12->addWidget(plotStartTimeEdit, 1, 1, 1, 1);
 
@@ -518,8 +520,8 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
-        tabWidget_2->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
+        tabWidget_2->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

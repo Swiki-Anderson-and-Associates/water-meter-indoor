@@ -9,8 +9,9 @@
 #include <QTime>
 #include <QDate>
 #include <QString>
-
-//#include <QDebug>
+#include <QtSql>
+#include <QSqlError>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -62,8 +63,11 @@ MainWindow::MainWindow(QWidget *parent) :
     updateTimer->start(30000);                                                        // update every thirty seconds
 
     // Create connection timeout timer
-    //connectionTimer = new QTimer(this);             // TODO: figure out this and finish it
+    connectionTimer = new QTimer(this);             // TODO: figure out this and finish it
     //connect()
+    connect(connectionTimer,SIGNAL(timeout()),this,SLOT(connectionTimeout()));  // in SLOT readSerialData,  "timer-start()" will restart the timer every time.
+    // connectionTimer->start(1000);
+    // connectionTimer->setSingleShot(1); // if once disconnected, other functions will be disabled.  Please use single-shot
 
     // Connect Console Signals and Slots
     connect(ui->consoleSettingsButton, SIGNAL(clicked()), serial, SLOT(showSettings()));
@@ -149,7 +153,7 @@ void MainWindow::readSerialData()
     plotUpdate();
     refreshControlPanel();
     ui->statusBar->showMessage("Transmission Received");
-    connectionTimer->start(300000);                             // notify user if no info recieved for 5 mins
+    connectionTimer->start(300000);                            // notify user if no info recieved for 5 mins
 }
 
 void MainWindow::processLine(QString dataString)
@@ -219,7 +223,8 @@ void MainWindow::refreshControlPanel()
     QTime dayStart = QTime::fromMSecsSinceStartOfDay(0);
     QDateTime thisMorning = now;
     thisMorning.setTime(dayStart);
-    if (db->isOpen())
+    //if (db->isOpen())
+    if (db->db.isOpen())
     {
         if (db->lastLeak().contains("No leaks"))
         {
@@ -290,9 +295,16 @@ void MainWindow::sendResetLeakCommand()
 
 void MainWindow::databaseOpen()
 {
-    //bool btemp;
     db->openDB(ui->databasePathLineEdit->text());
-    //qDebug() << "IsOpen: " << btemp << endl;
+    //db->open();
+    //db->addDatabase("QODBC");
+    //qDebug() << db->driverName();
+    //db->setDatabaseName(ui->databasePathLineEdit->text());
+    //db->setupTables();
+    //qDebug() << db->isOpenError();
+    //qDebug() << db->isValid();
+    //qDebug() << db->lastError().text();
+    //qDebug() << QSqlDatabase::drivers();
     ui->databaseBrowseButton->setEnabled(false);
     ui->databaseNewDBButton->setEnabled(false);
     ui->databaseConnectButton->setEnabled(false);
@@ -315,6 +327,7 @@ void MainWindow::databaseClose()
 void MainWindow::databaseFileBrowse()
 {
     QString path = QFileDialog::getOpenFileName(this,tr("Locate Database"),"",tr("SQLite Database (*.sqlite)"));
+    //QString path = QFileDialog::getOpenFileName(this,tr("Locate Database"),"",tr("QSQLITE Database (*.sqlite)"));
     ui->databasePathLineEdit->setText(path);
     if (!path.isEmpty())
     {
@@ -360,7 +373,7 @@ void MainWindow::plotToggleDateTimeBoxes(int index)
 
 void MainWindow::plotUpdate()
 {
-    if (db->isOpen())
+    if (db->db.isOpen())
     {
         ui->plotPlot->clearItems();
         ui->plotPlot->clearPlottables();
@@ -554,7 +567,8 @@ void MainWindow::plotUpdate()
             gallons->setWidth(50);
             ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
             //ui->plotPlot->xAxis->setTickStep(3600*24*now.date().daysInMonth()); // 1 month    //(Done)// TODO: fix to account for different month lengths
-            ui->plotPlot->xAxis->setTickVector(tickPos);
+            ui->plotPlot->xAxis->setAutoTicks(false);
+            ui->plotPlot->xAxis->setTickVector(barPos);
             ui->plotPlot->xAxis->setSubTickCount(0);
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Month");
@@ -567,13 +581,15 @@ void MainWindow::plotUpdate()
             start = tdatetime.toTime_t();
             tdatetime = ui->plotEndTimeEdit->dateTime();
             end = tdatetime.toTime_t();
-            if ((start - end) > 3600*24*90)   // >3 months, resolution is month lenght (dynamic)
+            if (end < start) ui->statusBar->showMessage("Incorrect custom date.");
+            else{
+            if ((end - start) > 3600*24*90)   // >3 months, resolution is month lenght (dynamic)
             {
                 tdatetime.setTime_t(start);
                 resolution = 3600*24*tdatetime.date().daysInMonth();
                 tprev = start;
                 tickPos << start;
-                for (unsigned int t = start+resolution; t <= end ; t+=resolution)
+                for (unsigned int t = start+resolution; t <= end + 3600*24*30 ; t+=resolution)
                 {
                     ngal = db->numGallonsBetween(tprev,t-1);
                     ngalsum += ngal;
@@ -592,6 +608,7 @@ void MainWindow::plotUpdate()
                 gallons->setData(barPos,gallonsData);
                 gallons->setWidth(50);
                 ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
+                ui->plotPlot->xAxis->setAutoTicks(false);
                 ui->plotPlot->xAxis->setTickVector(tickPos);
                 ui->plotPlot->xAxis->setSubTickCount(0);
                 ui->plotPlot->xAxis->setLabel("Time");
@@ -599,7 +616,7 @@ void MainWindow::plotUpdate()
             }
             else  // <3 months, resolution is static
             {
-                if ((start - end) > 3600*24*28)  //3months >= span >4 weeks
+                if ((end - start) > 3600*24*28)  //3months >= span >4 weeks
                 {
                     resolution = 3600*24;
                     ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
@@ -610,7 +627,7 @@ void MainWindow::plotUpdate()
                 }
                 else
                 {
-                    if ((start - end) > 3600*24*5)  //4weeks >=span >5days
+                    if ((end - start) > 3600*24*5)  //4weeks >=span >5days
                     {
                         resolution = 3600*24;
                         ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
@@ -621,7 +638,7 @@ void MainWindow::plotUpdate()
                     }
                     else
                     {
-                        if((start - end) > 3600*24*2)  //5days >= span > 2days
+                        if((end - start) > 3600*24*2)  //5days >= span > 2days
                         {
                             resolution = 3600;
                             ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
@@ -632,7 +649,7 @@ void MainWindow::plotUpdate()
                         }
                         else
                         {
-                            if ((start - end) > 3600*10)  //2days >= span >10hours
+                            if ((end - start) > 3600*10)  //2days >= span >10hours
                             {
                                 resolution = 3600;
                                 ui->plotPlot->xAxis->setDateTimeFormat("h AP");
@@ -669,6 +686,7 @@ void MainWindow::plotUpdate()
                 }
                 gallons->setData(barPos,gallonsData);
                 gallons->setWidth(50);
+            }
             }
             break;
         }

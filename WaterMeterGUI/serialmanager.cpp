@@ -39,7 +39,7 @@ QString SerialManager::openPort()
         }
     } else {
 
-        return tr("Configure error");
+        return tr("Configure error");  // should be "Open error", please check them
     }
 }
 

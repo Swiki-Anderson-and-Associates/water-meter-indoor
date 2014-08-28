@@ -5,7 +5,8 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-class DatabaseManager : public QSqlDatabase
+//class DatabaseManager : public QSqlDatabase
+class DatabaseManager
 {
 public:
     DatabaseManager();
@@ -20,6 +21,7 @@ public:
     QString lastValve();
     QSqlError lastError();
     int numGallonsBetween(qint32 start, qint32 end);
+    QSqlDatabase db;
 
 private:
     QString dbDirectory;
