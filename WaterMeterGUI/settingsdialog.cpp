@@ -63,6 +63,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     connect(ui->applyButton, SIGNAL(clicked()),
             this, SLOT(apply()));
+    connect(ui->refreshButton,SIGNAL(clicked()),this,SLOT(refresh()));
     connect(ui->serialPortInfoListBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(showPortInfo(int)));
     connect(ui->baudRateBox, SIGNAL(currentIndexChanged(int)),
@@ -100,6 +101,16 @@ void SettingsDialog::apply()
 {
     updateSettings();
     hide();
+}
+
+// TODO: definition of refresh button
+void SettingsDialog::refresh()
+{
+    ui->baudRateBox->setCurrentText("19200");
+    ui->dataBitsBox->setCurrentText("5");
+    ui->parityBox->setCurrentText("None");
+    ui->stopBitsBox->setCurrentText("1");
+    ui->flowControlBox->setCurrentText("None");
 }
 
 void SettingsDialog::checkCustomBaudRatePolicy(int idx)

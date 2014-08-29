@@ -31,6 +31,7 @@ public:
     QGridLayout *gridLayout_3;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer;
+    QPushButton *refreshButton;
     QPushButton *applyButton;
     QGroupBox *selectBox;
     QGridLayout *gridLayout;
@@ -57,7 +58,7 @@ public:
     {
         if (SettingsDialog->objectName().isEmpty())
             SettingsDialog->setObjectName(QStringLiteral("SettingsDialog"));
-        SettingsDialog->resize(281, 262);
+        SettingsDialog->resize(327, 262);
         gridLayout_3 = new QGridLayout(SettingsDialog);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         horizontalLayout = new QHBoxLayout();
@@ -65,6 +66,11 @@ public:
         horizontalSpacer = new QSpacerItem(96, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer);
+
+        refreshButton = new QPushButton(SettingsDialog);
+        refreshButton->setObjectName(QStringLiteral("refreshButton"));
+
+        horizontalLayout->addWidget(refreshButton);
 
         applyButton = new QPushButton(SettingsDialog);
         applyButton->setObjectName(QStringLiteral("applyButton"));
@@ -177,6 +183,7 @@ public:
     void retranslateUi(QDialog *SettingsDialog)
     {
         SettingsDialog->setWindowTitle(QApplication::translate("SettingsDialog", "Settings", 0));
+        refreshButton->setText(QApplication::translate("SettingsDialog", "Refresh", 0));
         applyButton->setText(QApplication::translate("SettingsDialog", "Apply", 0));
         selectBox->setTitle(QApplication::translate("SettingsDialog", "Select Serial Port", 0));
         descriptionLabel->setText(QApplication::translate("SettingsDialog", "Description:", 0));

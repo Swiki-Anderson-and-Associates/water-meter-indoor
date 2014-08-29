@@ -5,10 +5,10 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //class DatabaseManager : public QSqlDatabase
-=======
->>>>>>> origin/joye
+//=======
+//>>>>>>> origin/joye
 class DatabaseManager
 {
 public:
@@ -24,11 +24,7 @@ public:
     QString lastValve();
     QSqlError lastError();
     int numGallonsBetween(qint32 start, qint32 end);
-<<<<<<< HEAD
-    QSqlDatabase db;
-=======
     QSqlDatabase db;                                        // TODO: make this private (encapsulation is good)
->>>>>>> origin/joye
 
 private:
 
