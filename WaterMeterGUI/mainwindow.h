@@ -28,6 +28,7 @@ private slots:
     void writeConsole(QString text);
     void readSerialData();
     void processLine(QString dataString);
+    void processLine(QByteArray data);
     void connectionTimeout();
     void refreshControlPanel();
     void sendResetCommand();

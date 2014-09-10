@@ -9,14 +9,9 @@
 #include <QTime>
 #include <QDate>
 #include <QString>
-<<<<<<< HEAD
 #include <QtSql>
 #include <QSqlError>
 #include <QDebug>
-=======
-
-//#include <QDebug>
->>>>>>> origin/joye
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -68,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     updateTimer->start(30000);                                                        // update every thirty seconds
 
     // Create connection timeout timer
-    connectionTimer = new QTimer(this);             //TODO: figure out this and finish it
+    connectionTimer = new QTimer(this);             //(Done)TODO: figure out this and finish it
     connect(connectionTimer,SIGNAL(timeout()),this,SLOT(connectionTimeout()));  // in SLOT readSerialData,  "timer-start()" will restart the timer every time.
     connectionTimer->start(300000);
     connectionTimer->setSingleShot(1); // if once disconnected, other functions will be disabled.  Please use single-shot
@@ -152,7 +147,9 @@ void MainWindow::readSerialData()
          ui->consoleTextDisplay->insertPlainText(data);
          QScrollBar *sb = ui->consoleTextDisplay->verticalScrollBar();
          sb->setValue(sb->maximum());
-         processLine(QString::fromUtf8(data));
+         //processLine(QString::fromUtf8(data));
+         processLine(data);
+         //TODO: Get rid of String, then use byteArray directly.
     }
     plotUpdate();
     refreshControlPanel();
@@ -216,6 +213,50 @@ void MainWindow::processLine(QString dataString)
     // (Done)TODO: Add handling for improper data format
 }
 
+void MainWindow::processLine(QByteArray data)
+{
+
+    log << QString::fromUtf8(data);  // (check) if log file need to be added annotations or just data_string?
+    static bool inLog;
+    bool inHeader = false;
+    if ((data[0]|0x0) == 0x04)  // if (dataString.contains("Gallon Log"))
+    {
+        inLog = true;
+        inHeader = true;
+     }
+    else if ((data[0]|0x0) == 0x02)  // else if (dataString.contains("End Log"))
+    {
+         inLog = false;
+    }
+    else if (inHeader == false)      // This guard seems not necessary.  The main problem is that if "Gallon Log" or "End Log", nothing will be done in this function.
+    {
+        if (inLog)
+        {
+            if(!data.isEmpty())  //  if (!dataString.contains("Empty")) //
+            {
+                if (data.size() >= 5)      //if (stringList.length() >=3 )
+                {
+                    qint32 unixTime = (data[1]<<24)|(data[2]<<16)|(data[3]<<8)|(data[4]);
+                    db->logGallon(unixTime,1);//db->logGallon(unixTime,stringList[2].toInt());  //(Check) if the stringList[2] is gallon amount
+                }
+            }
+        }
+        else
+        {
+            qint32 unixTime = (data[1]<<24)|(data[2]<<16)|(data[3]<<8)|(data[4]);
+            if((data[0] >> 4) == 0x1) //if (stringList[1].contains("Valve"))
+            {
+                //db->logValve(unixTime,stringList[2].toUtf8());
+                db->logValve(unixTime,data[0]);   // (check) if it is OK that one byte (two nibble) was added in logValve.
+            }
+            if ((data[0]>>4) == 0x2 )//if (stringList[1].contains("Leak"))
+            {
+                db->logLeak(unixTime,data[0]); //db->logLeak(unixTime,stringList[2].toUtf8());
+            }
+        }
+    }
+}
+
 void MainWindow::connectionTimeout()
 {
     ui->statusBar->showMessage("Error: Connection Lost");
@@ -224,15 +265,14 @@ void MainWindow::connectionTimeout()
 void MainWindow::refreshControlPanel()
 {
     QDateTime now = QDateTime::currentDateTime();
+    //QDateTime now = QDateTime::fromString("2014/06/17 17:00:00", "yyyy/MM/dd hh:mm:ss");
+    //qDebug() << now.toString();
     QTime dayStart = QTime::fromMSecsSinceStartOfDay(0);
     QDateTime thisMorning = now;
     thisMorning.setTime(dayStart);
-<<<<<<< HEAD
     //if (db->isOpen())
-=======
->>>>>>> origin/joye
     if (db->db.isOpen())
-    {
+    {        
         if (db->lastLeak().contains("No leaks"))
         {
             ui->controlLeakConditionLabel->setText("NONE");
@@ -242,7 +282,7 @@ void MainWindow::refreshControlPanel()
             ui->controlLeakConditionLabel->setText("LEAK");
         }
         ui->controlValvePositionLabel->setText(db->lastValve());
-        ui->controlGallonsTodayLCD->display(db->numGallonsBetween(thisMorning.toTime_t(),now.toTime_t()));        // TODO: check this, not sure if its working right
+        ui->controlGallonsTodayLCD->display(db->numGallonsBetween(thisMorning.toTime_t(),now.toTime_t()));   // (Checked)TODO: check this, not sure if its working right
     }
     else
     {
@@ -302,21 +342,7 @@ void MainWindow::sendResetLeakCommand()
 
 void MainWindow::databaseOpen()
 {
-    //bool btemp;
     db->openDB(ui->databasePathLineEdit->text());
-<<<<<<< HEAD
-    //db->open();
-    //db->addDatabase("QODBC");
-    //qDebug() << db->driverName();
-    //db->setDatabaseName(ui->databasePathLineEdit->text());
-    //db->setupTables();
-    //qDebug() << db->isOpenError();
-    //qDebug() << db->isValid();
-    //qDebug() << db->lastError().text();
-    //qDebug() << QSqlDatabase::drivers();
-=======
-    //qDebug() << "IsOpen: " << btemp << endl;
->>>>>>> origin/joye
     ui->databaseBrowseButton->setEnabled(false);
     ui->databaseNewDBButton->setEnabled(false);
     ui->databaseConnectButton->setEnabled(false);
@@ -339,7 +365,6 @@ void MainWindow::databaseClose()
 void MainWindow::databaseFileBrowse()
 {
     QString path = QFileDialog::getOpenFileName(this,tr("Locate Database"),"",tr("SQLite Database (*.sqlite)"));
-    //QString path = QFileDialog::getOpenFileName(this,tr("Locate Database"),"",tr("QSQLITE Database (*.sqlite)"));
     ui->databasePathLineEdit->setText(path);
     if (!path.isEmpty())
     {
@@ -578,14 +603,9 @@ void MainWindow::plotUpdate()
             gallons->setData(barPos,gallonsData);
             gallons->setWidth(50);
             ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
-<<<<<<< HEAD
             //ui->plotPlot->xAxis->setTickStep(3600*24*now.date().daysInMonth()); // 1 month    //(Done)TODO: fix to account for different month lengths
             ui->plotPlot->xAxis->setAutoTicks(false);
             ui->plotPlot->xAxis->setTickVector(barPos);
-=======
-            //ui->plotPlot->xAxis->setTickStep(3600*24*now.date().daysInMonth()); // 1 month    //(Done)// TODO: fix to account for different month lengths
-            ui->plotPlot->xAxis->setTickVector(tickPos);
->>>>>>> origin/joye
             ui->plotPlot->xAxis->setSubTickCount(0);
             ui->plotPlot->xAxis->setLabel("Time");
             ui->plotPlot->yAxis->setLabel("Gallons Used By Month");
@@ -598,23 +618,15 @@ void MainWindow::plotUpdate()
             start = tdatetime.toTime_t();
             tdatetime = ui->plotEndTimeEdit->dateTime();
             end = tdatetime.toTime_t();
-<<<<<<< HEAD
             if (end < start) ui->statusBar->showMessage("Incorrect custom time periods.");
             else{
             if ((end - start) > 3600*24*90)   // >3 months, resolution is month lenght (dynamic)
-=======
-            if ((start - end) > 3600*24*90)   // >3 months, resolution is month lenght (dynamic)
->>>>>>> origin/joye
             {
                 tdatetime.setTime_t(start);
                 resolution = 3600*24*tdatetime.date().daysInMonth();
                 tprev = start;
                 tickPos << start;
-<<<<<<< HEAD
                 for (unsigned int t = start+resolution; t <= end + 3600*24*30 ; t+=resolution)
-=======
-                for (unsigned int t = start+resolution; t <= end ; t+=resolution)
->>>>>>> origin/joye
                 {
                     ngal = db->numGallonsBetween(tprev,t-1);
                     ngalsum += ngal;
@@ -633,10 +645,7 @@ void MainWindow::plotUpdate()
                 gallons->setData(barPos,gallonsData);
                 gallons->setWidth(50);
                 ui->plotPlot->xAxis->setDateTimeFormat("MMM yy");
-<<<<<<< HEAD
                 ui->plotPlot->xAxis->setAutoTicks(false);
-=======
->>>>>>> origin/joye
                 ui->plotPlot->xAxis->setTickVector(tickPos);
                 ui->plotPlot->xAxis->setSubTickCount(0);
                 ui->plotPlot->xAxis->setLabel("Time");
@@ -644,11 +653,7 @@ void MainWindow::plotUpdate()
             }
             else  // <3 months, resolution is static
             {
-<<<<<<< HEAD
                 if ((end - start) > 3600*24*28)  //3months >= span >4 weeks
-=======
-                if ((start - end) > 3600*24*28)  //3months >= span >4 weeks
->>>>>>> origin/joye
                 {
                     resolution = 3600*24;
                     ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
@@ -659,11 +664,7 @@ void MainWindow::plotUpdate()
                 }
                 else
                 {
-<<<<<<< HEAD
                     if ((end - start) > 3600*24*5)  //4weeks >=span >5days
-=======
-                    if ((start - end) > 3600*24*5)  //4weeks >=span >5days
->>>>>>> origin/joye
                     {
                         resolution = 3600*24;
                         ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
@@ -674,11 +675,7 @@ void MainWindow::plotUpdate()
                     }
                     else
                     {
-<<<<<<< HEAD
                         if((end - start) > 3600*24*2)  //5days >= span > 2days
-=======
-                        if((start - end) > 3600*24*2)  //5days >= span > 2days
->>>>>>> origin/joye
                         {
                             resolution = 3600;
                             ui->plotPlot->xAxis->setDateTimeFormat("MM/dd");
@@ -689,11 +686,7 @@ void MainWindow::plotUpdate()
                         }
                         else
                         {
-<<<<<<< HEAD
                             if ((end - start) > 3600*10)  //2days >= span >10hours
-=======
-                            if ((start - end) > 3600*10)  //2days >= span >10hours
->>>>>>> origin/joye
                             {
                                 resolution = 3600;
                                 ui->plotPlot->xAxis->setDateTimeFormat("h AP");
@@ -731,10 +724,7 @@ void MainWindow::plotUpdate()
                 gallons->setData(barPos,gallonsData);
                 gallons->setWidth(50);
             }
-<<<<<<< HEAD
             }
-=======
->>>>>>> origin/joye
             break;
         }
 
