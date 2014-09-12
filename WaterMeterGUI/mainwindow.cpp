@@ -217,44 +217,69 @@ void MainWindow::processLine(QByteArray data)
 {
 
     log << QString::fromUtf8(data);  // (check) if log file need to be added annotations or just data_string?
-    static bool inLog;
-    bool inHeader = false;
-    if ((data[0]|0x0) == 0x04)  // if (dataString.contains("Gallon Log"))
+    if ((data[0]>>4) == 0x0)   // Category Log
     {
-        inLog = true;
-        inHeader = true;
-     }
-    else if ((data[0]|0x0) == 0x02)  // else if (dataString.contains("End Log"))
-    {
-         inLog = false;
-    }
-    else if (inHeader == false)      // This guard seems not necessary.  The main problem is that if "Gallon Log" or "End Log", nothing will be done in this function.
-    {
-        if (inLog)
+        if(!data.isEmpty())  //  if (!dataString.contains("Empty")) //
         {
-            if(!data.isEmpty())  //  if (!dataString.contains("Empty")) //
+            if (data.size() >= 5)      //if (stringList.length() >=3 )
             {
-                if (data.size() >= 5)      //if (stringList.length() >=3 )
-                {
-                    qint32 unixTime = (data[1]<<24)|(data[2]<<16)|(data[3]<<8)|(data[4]);
-                    db->logGallon(unixTime,1);//db->logGallon(unixTime,stringList[2].toInt());  //(Check) if the stringList[2] is gallon amount
-                }
-            }
-        }
-        else
-        {
-            qint32 unixTime = (data[1]<<24)|(data[2]<<16)|(data[3]<<8)|(data[4]);
-            if((data[0] >> 4) == 0x1) //if (stringList[1].contains("Valve"))
-            {
-                //db->logValve(unixTime,stringList[2].toUtf8());
-                db->logValve(unixTime,data[0]);   // (check) if it is OK that one byte (two nibble) was added in logValve.
-            }
-            if ((data[0]>>4) == 0x2 )//if (stringList[1].contains("Leak"))
-            {
-                db->logLeak(unixTime,data[0]); //db->logLeak(unixTime,stringList[2].toUtf8());
+                qint32 unixTime = (data[1]<<24)|(data[2]<<16)|(data[3]<<8)|(data[4]);
+                db->logGallon(unixTime,1);//db->logGallon(unixTime,stringList[2].toInt());  //(Check) if the stringList[2] is gallon amount
             }
         }
     }
+    else
+    {
+        qint32 unixTime = (data[1]<<24)|(data[2]<<16)|(data[3]<<8)|(data[4]);
+        if((data[0] >> 4) == 0x1) //if (stringList[1].contains("Valve"))
+        {
+            QString str;
+            //db->logValve(unixTime,stringList[2].toUtf8());
+            if(data.size() == 5)
+            switch ((data[0]&0xf)){
+            case 0x0:
+                //log_temp = "Valve Error" +
+                if(data.size() == 6) {int err_cod = data[5];
+                str = ("Valve Error. Code: " + str.setNum(err_cod));
+                    }
+                else str = "Valve Error, but unknown error code";
+                break;
+            case 0x1:
+                //db->logValve(unixTime,"Valve Position Opened");
+                str = "Valve Position Opened";
+                break;
+            case 0x2:
+                //db->logValve(unixTime,"Valve Position Closed");
+                str = "Valve Position Closed";
+                break;
+            }
+             db->logValve(unixTime,str);
+        }
+        if ((data[0]>>4) == 0x2 )//if (stringList[1].contains("Leak"))
+        {
+            QString str;
+            switch ((data[0]&0xf)){
+            case 0x0:
+                if(data.size() == 6) {int err_cod = data[5];
+                str = ("Leak Error. Code: " + str.setNum(err_cod));
+                    }
+                else str = "Leak Error, but unknow error code";
+                break;
+            case 0x1:
+                str = "No Leak";  //db->logLeak(unixTime,"No Leak");
+                break;
+            case 0x2:
+                str = "Leak Condition Cleared"; //db->logLeak(unixTime,"Leak Condition Cleared");
+                break;
+            case 0x3:
+                str = "Leak Condition";
+                //db->logLeak(unixTime,"Leak Condition");
+                break;
+            }
+            db->logLeak(unixTime,str);
+        }
+    }
+
 }
 
 void MainWindow::connectionTimeout()
