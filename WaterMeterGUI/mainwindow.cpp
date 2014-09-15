@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //logFile.setFileName("log.txt");
     logFile.open(QIODevice::Append);
     log.setDevice(&logFile);
-    // TODO: separate hex and interpreted log files
+    // TODO: store all data sent to and received from outdoor unit in log file, include the time the data was sent and which way it was going
     // (Done)TODO: make log files refresh monthly
 
     // Setup Console
@@ -85,7 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->controlClearLeakConditionButton,SIGNAL(clicked()),this,SLOT(sendResetLeakCommand()));
     connect(ui->controlAutoModeButton,SIGNAL(clicked()),this,SLOT(setAutomaticValveControl()));
     ui->controlTab->setEnabled(false);
-    // TODO: add autoswitching for mode buttons
 
     // Connect Database Signals and Slots
     connect(ui->databaseConnectButton,SIGNAL(clicked()),this,SLOT(databaseOpen()));
@@ -154,7 +153,7 @@ void MainWindow::readSerialData()
     plotUpdate();
     refreshControlPanel();
     ui->statusBar->showMessage("Transmission Received");
-    connectionTimer->start(300000);                            // notify user if no info recieved for 5 mins
+    connectionTimer->start(300000);                            //TODO: notify user if no info recieved for 5 mins
 }
 
 void MainWindow::processLine(QString dataString)
@@ -213,6 +212,9 @@ void MainWindow::processLine(QString dataString)
     // (Done)TODO: Add handling for improper data format
 }
 
+// TODO: Format this as nested switch statements with the upper level switching between the nibble indicating the command type and nested switches for each individual command
+// TODO: each case in the switch statement should call the function (or function prototype) corresponding to the command
+// TODO: change the databasemanager class to log data in the new hex format. May need to change the layout of the tables. The database is a SQLite database. If you aren't familiar with this Andrew can handle it.
 void MainWindow::processLine(QByteArray data)
 {
 
@@ -315,6 +317,7 @@ void MainWindow::refreshControlPanel()
     }
 }
 
+// TODO: fix the functions below this point to send the proper hex commands instead of old char commands
 void MainWindow::sendResetCommand()
 {
     serial->writeData("r");
@@ -336,7 +339,7 @@ void MainWindow::sendOpenValveCommand()
 
 void MainWindow::setAutomaticValveControl()
 {
-    // TODO: add automatic control function
+    // TODO: make this send auto valve control command
 }
 
 void MainWindow::sendReportLeakCommand()
@@ -365,6 +368,7 @@ void MainWindow::sendResetLeakCommand()
     ui->controlLeakConditionLabel->setText("None");
 }
 
+// TODO: make the program remember the last connected database and automatically reconnect on startup, this will require creating a configuration file. The user should still be able to change to a different database if desired.
 void MainWindow::databaseOpen()
 {
     db->openDB(ui->databasePathLineEdit->text());
@@ -433,6 +437,7 @@ void MainWindow::plotToggleDateTimeBoxes(int index)
     }
 }
 
+// TODO: Fix the plot dat labels so that they don't overlap each other.
 void MainWindow::plotUpdate()
 {
     if (db->db.isOpen())
