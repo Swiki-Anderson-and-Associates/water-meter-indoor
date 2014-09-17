@@ -20,7 +20,8 @@ public slots:
     void showSettings();
     QString openPort();
     void closePort();
-    void writeData(QString text);
+    //void writeData(QString text);
+    void writeData(QByteArray byte);
     QByteArray readData();
 
 private:

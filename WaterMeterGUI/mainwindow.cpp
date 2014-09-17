@@ -148,12 +148,14 @@ void MainWindow::readSerialData()
          sb->setValue(sb->maximum());
          //processLine(QString::fromUtf8(data));
          processLine(data);
-         //TODO: Get rid of String, then use byteArray directly.
+         //(DONE)TODO: Get rid of String, then use byteArray directly.
     }
     plotUpdate();
     refreshControlPanel();
     ui->statusBar->showMessage("Transmission Received");
-    connectionTimer->start(300000);                            //TODO: notify user if no info recieved for 5 mins
+    connectionTimer->start(300000);                            //(DONE)TODO: notify user if no info recieved for 5 mins
+    // In main window construction function, the timer is connected to slot::connectionTimeout(), which will notify user
+    // Please check line 67: connect(connectionTimer,SIGNAL(timeout()),this,SLOT(connectionTimeout()));
 }
 
 void MainWindow::processLine(QString dataString)
@@ -317,54 +319,71 @@ void MainWindow::refreshControlPanel()
     }
 }
 
-// TODO: fix the functions below this point to send the proper hex commands instead of old char commands
+//(DONE)TODO: fix the functions below this point to send the proper hex commands instead of old char commands
 void MainWindow::sendResetCommand()
 {
-    serial->writeData("r");
+    char sendcommand[] = {0x51};  // System Reset
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));  //serial->writeData("r");
     ui->controlValvePositionLabel->setText("Open");
     ui->controlLeakConditionLabel->setText("None");
 }
 
 void MainWindow::sendCloseValveCommand()
 {
-    serial->writeData("c");
+    //serial->writeData("c");
+    char sendcommand[] = {0x12};  // Close Valve
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
     ui->controlValvePositionLabel->setText("Closed");
 }
 
 void MainWindow::sendOpenValveCommand()
 {
-    serial->writeData("o");
+    //serial->writeData("o");
+    char sendcommand[] = {0x11};  // Open Valve
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
     ui->controlValvePositionLabel->setText("Open");
 }
 
 void MainWindow::setAutomaticValveControl()
 {
-    // TODO: make this send auto valve control command
+    // (DONE)TODO: make this send auto valve control command
+    char sendcommand[] = {0x52};  // Set Auto Control
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
 }
 
 void MainWindow::sendReportLeakCommand()
 {
-    serial->writeData("l");
+    //serial->writeData("l");
+    char sendcommand[] = {0x21};  // Read Leak Condition
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
 }
 
 void MainWindow::sendReportValveCommand()
 {
-    serial->writeData("v");
+    //serial->writeData("v");
+    char sendcommand[] = {0x13};    // Read Valve Position
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
 }
 
 void MainWindow::sendReportLogCommand()
 {
-    serial->writeData("h");
+    //serial->writeData("h");
+    char sendcommand[] = {0x01};    //Log Request
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
 }
 
 void MainWindow::sendClearLogCommand()
 {
-    serial->writeData("q");
+    //serial->writeData("q");
+    char sendcommand[] = {0x02};    //Clear Log
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
 }
 
 void MainWindow::sendResetLeakCommand()
 {
-    serial->writeData("k");
+    //serial->writeData("k");
+    char sendcommand[] = {0x22};    //Clear Leak Condition
+    serial->writeData(QByteArray::fromRawData(sendcommand,sizeof(sendcommand)));
     ui->controlLeakConditionLabel->setText("None");
 }
 

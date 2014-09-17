@@ -48,9 +48,14 @@ void SerialManager::closePort()
     close();
 }
 
-void SerialManager::writeData(QString text)
+/*void SerialManager::writeData(QString text)
 {
     write(text.toLocal8Bit());
+}*/
+
+void SerialManager::writeData(QByteArray byte)
+{
+    write(byte);
 }
 
 QByteArray SerialManager::readData()        // as of right now, this function is pointless, but could be useful
